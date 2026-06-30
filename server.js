@@ -75,6 +75,16 @@ app.use((err, req, res, next) => {
   res.status(500).render('error', { title: 'Error', message: 'An unexpected error occurred.', status: 500 });
 });
 
-app.listen(PORT, () => {
-  console.log(`CSRMS running at http://localhost:${PORT}`);
-});
+async function start() {
+  const { checkDatabase } = require('./scripts/check-db');
+  const ok = await checkDatabase();
+  if (!ok) {
+    process.exit(1);
+  }
+
+  app.listen(PORT, () => {
+    console.log(`CSRMS running at http://localhost:${PORT}`);
+  });
+}
+
+start();

@@ -68,6 +68,12 @@ npm run db:setup
 npm run db:seed
 ```
 
+**Or run both in one command:**
+
+```bash
+npm run db:init
+```
+
 ### 5. Start the server
 
 ```bash

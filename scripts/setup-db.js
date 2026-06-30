@@ -28,7 +28,13 @@ async function setup() {
     }
   } catch (err) {
     console.error('Failed to create database:', err.message);
-    console.log('Attempting to connect to existing database...');
+    if (err.code === '28P01') {
+      console.error('\nWrong PostgreSQL password. Set DB_PASSWORD in your .env file.\n');
+    } else if (err.code === 'ECONNREFUSED') {
+      console.error('\nCannot connect to PostgreSQL. Make sure the PostgreSQL service is running.\n');
+    }
+    await adminPool.end();
+    process.exit(1);
   } finally {
     await adminPool.end();
   }
