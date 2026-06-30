@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+require('./require-deps').requireDeps();
 const { Pool } = require('pg');
 require('dotenv').config();
 

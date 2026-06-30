@@ -27,6 +27,24 @@ A web-based retail management system for Crown Stores, built with **Node.js**, *
 - Node.js 18+
 - PostgreSQL running on your machine
 
+## Quick Start (Windows)
+
+Open **Git Bash**, **PowerShell**, or **Command Prompt** in the project folder:
+
+```bash
+npm install
+copy .env.example .env
+```
+
+Edit `.env` and set `DB_PASSWORD` to your PostgreSQL password, then:
+
+```bash
+npm run db:init
+npm start
+```
+
+Open http://localhost:3000
+
 ## Setup
 
 ### 1. Clone and install dependencies

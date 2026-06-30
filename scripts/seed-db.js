@@ -1,3 +1,4 @@
+require('./require-deps').requireDeps();
 const bcrypt = require('bcryptjs');
 const { pool } = require('../config/database');
 
