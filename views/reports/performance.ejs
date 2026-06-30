@@ -1,0 +1,49 @@
+<%- include('../partials/header') %>
+
+<div class="page-header flex-between">
+  <div><h1>Company Performance Report</h1></div>
+  <div class="action-links">
+    <a href="/reports/performance?format=pdf" class="btn btn-outline">Download PDF</a>
+    <a href="/reports" class="btn btn-outline">Back</a>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card"><span class="stat-label">Total Sales</span>
+    <span class="stat-value">KES <%= totalSales.toFixed(2) %></span></div>
+  <div class="stat-card"><span class="stat-label">Inventory Value</span>
+    <span class="stat-value">KES <%= inventoryValue.toFixed(2) %></span></div>
+  <div class="stat-card"><span class="stat-label">Procurement Value</span>
+    <span class="stat-value">KES <%= procurementValue.toFixed(2) %></span></div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h2>Top Selling Categories</h2>
+    <table class="table">
+      <thead><tr><th>Category</th><th>Revenue</th></tr></thead>
+      <tbody>
+        <% topCategories.forEach(c => { %>
+          <tr><td><%= c.name %></td><td>KES <%= parseFloat(c.revenue).toFixed(2) %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h2>Top Selling Products</h2>
+    <table class="table">
+      <thead><tr><th>Product</th><th>Qty</th><th>Revenue</th></tr></thead>
+      <tbody>
+        <% topProducts.forEach(p => { %>
+          <tr>
+            <td><%= p.name %></td>
+            <td><%= p.qty %></td>
+            <td>KES <%= parseFloat(p.revenue).toFixed(2) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

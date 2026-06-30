@@ -1,0 +1,48 @@
+<%- include('../partials/header') %>
+
+<div class="page-header flex-between">
+  <div>
+    <h1>Products</h1>
+    <p>Manage product catalog and pricing</p>
+  </div>
+  <% if (user.role === 'manager') { %>
+    <a href="/products/new" class="btn btn-primary">+ New Product</a>
+  <% } %>
+</div>
+
+<form method="GET" class="search-bar">
+  <input type="text" name="search" value="<%= search %>" placeholder="Search products...">
+  <button type="submit" class="btn btn-outline">Search</button>
+</form>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>Category</th><th>Cost</th><th>Price</th>
+        <th>Stock</th><th>Reorder</th><th>Barcodes</th><th>Status</th>
+        <% if (user.role === 'manager') { %><th>Actions</th><% } %>
+      </tr>
+    </thead>
+    <tbody>
+      <% products.forEach(p => { %>
+        <tr class="<%= p.quantity === 0 ? 'row-danger' : (p.quantity <= p.reorder_level ? 'row-warning' : '') %>">
+          <td><%= p.id %></td>
+          <td><%= p.name %></td>
+          <td><%= p.category_name %></td>
+          <td>KES <%= parseFloat(p.cost_price).toFixed(2) %></td>
+          <td>KES <%= parseFloat(p.selling_price).toFixed(2) %></td>
+          <td><%= p.quantity %></td>
+          <td><%= p.reorder_level %></td>
+          <td><%= p.barcodes || '-' %></td>
+          <td><span class="badge badge-<%= p.status %>"><%= p.status %></span></td>
+          <% if (user.role === 'manager') { %>
+            <td><a href="/products/<%= p.id %>/edit" class="btn btn-sm btn-outline">Edit</a></td>
+          <% } %>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../partials/footer') %>

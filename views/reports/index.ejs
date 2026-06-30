@@ -1,0 +1,35 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <h1>Reports & Analytics</h1>
+  <p>Generate and download management reports</p>
+</div>
+
+<div class="report-grid">
+  <a href="/reports/daily-sales" class="report-card">
+    <h3>Daily Sales Report</h3>
+    <p>Products sold, quantities, and revenue</p>
+  </a>
+  <a href="/reports/inventory" class="report-card">
+    <h3>Inventory Report</h3>
+    <p>Current stock, low stock, and out-of-stock products</p>
+  </a>
+  <a href="/reports/procurement" class="report-card">
+    <h3>Procurement Report</h3>
+    <p>Products procured and supplier information</p>
+  </a>
+  <% if (role === 'manager') { %>
+  <a href="/reports/cashier" class="report-card">
+    <h3>Cashier Balancing Report</h3>
+    <p>Cashier sales, collected cash, and variances</p>
+  </a>
+  <% } %>
+  <% if (role === 'director') { %>
+  <a href="/reports/performance" class="report-card">
+    <h3>Company Performance</h3>
+    <p>Total sales, inventory value, top products and categories</p>
+  </a>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

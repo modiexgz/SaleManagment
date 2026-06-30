@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' | ' : '' %>Crown Stores CSRMS</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <% if (typeof user !== 'undefined' && user) { %>
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="/dashboard">Crown Stores</a>
+      <span class="nav-subtitle">CSRMS</span>
+    </div>
+    <div class="nav-links">
+      <a href="/dashboard" class="<%= currentPath === '/dashboard' ? 'active' : '' %>">Dashboard</a>
+      <% if (user.role === 'manager') { %>
+        <a href="/categories">Categories</a>
+        <a href="/products">Products</a>
+        <a href="/procurement">Procurement</a>
+        <a href="/inventory">Inventory</a>
+        <a href="/sales">Sales</a>
+        <a href="/cashier">Cashier</a>
+        <a href="/reports">Reports</a>
+        <a href="/notifications">Alerts</a>
+      <% } else if (user.role === 'director') { %>
+        <a href="/products">Products</a>
+        <a href="/reports">Reports</a>
+      <% } else if (user.role === 'sales_agent') { %>
+        <a href="/products">Products</a>
+        <a href="/sales">Sales</a>
+        <a href="/sales/new">New Sale</a>
+      <% } %>
+    </div>
+    <div class="nav-user">
+      <span class="user-badge <%= user.role %>"><%= user.role.replace('_', ' ') %></span>
+      <span><%= user.full_name %></span>
+      <a href="/logout" class="btn btn-sm btn-outline">Logout</a>
+    </div>
+  </nav>
+  <% } %>
+
+  <main class="container">
+    <% if (typeof flash !== 'undefined' && flash) { %>
+      <div class="alert alert-<%= flash.type %>"><%= flash.message %></div>
+    <% } %>

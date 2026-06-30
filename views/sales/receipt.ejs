@@ -1,0 +1,40 @@
+<%- include('../partials/header') %>
+
+<div class="page-header flex-between">
+  <div>
+    <h1>Receipt</h1>
+    <p><%= sale.receipt_number %></p>
+  </div>
+  <div class="action-links">
+    <button onclick="window.print()" class="btn btn-primary">Print Receipt</button>
+    <a href="/sales/<%= sale.id %>/receipt/pdf" class="btn btn-outline">Download PDF</a>
+    <a href="/sales/new" class="btn btn-outline">New Sale</a>
+  </div>
+</div>
+
+<div class="card receipt-card" id="receipt">
+  <div class="receipt-header">
+    <h2>Crown Stores</h2>
+    <p><%= sale.branch_name %></p>
+    <p>Receipt: <strong><%= sale.receipt_number %></strong></p>
+    <p><%= new Date(sale.sale_date).toLocaleString() %></p>
+  </div>
+  <hr>
+  <div class="receipt-body">
+    <table class="receipt-table">
+      <tr><td>Product</td><td><%= sale.product_name %></td></tr>
+      <tr><td>Quantity</td><td><%= sale.quantity %></td></tr>
+      <tr><td>Unit Price</td><td>KES <%= parseFloat(sale.unit_price).toFixed(2) %></td></tr>
+      <tr class="total-row"><td>Total</td><td>KES <%= parseFloat(sale.total_amount).toFixed(2) %></td></tr>
+      <tr><td>Amount Paid</td><td>KES <%= parseFloat(sale.amount_paid).toFixed(2) %></td></tr>
+      <tr><td>Change</td><td>KES <%= (parseFloat(sale.amount_paid) - parseFloat(sale.total_amount)).toFixed(2) %></td></tr>
+    </table>
+  </div>
+  <hr>
+  <div class="receipt-footer">
+    <p>Sales Agent: <%= sale.agent_name %></p>
+    <p>Thank you for shopping at Crown Stores!</p>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,40 @@
+<%- include('../partials/header') %>
+
+<div class="page-header flex-between">
+  <div>
+    <h1>Cashier Balancing Report</h1>
+    <p><%= new Date(date).toLocaleDateString() %></p>
+  </div>
+  <div class="action-links">
+    <a href="/reports/cashier?date=<%= date %>&format=pdf" class="btn btn-outline">Download PDF</a>
+    <a href="/reports" class="btn btn-outline">Back</a>
+  </div>
+</div>
+
+<form method="GET" class="search-bar">
+  <input type="date" name="date" value="<%= date %>">
+  <button type="submit" class="btn btn-outline">Filter</button>
+</form>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr><th>Cashier</th><th>Total Sales</th><th>Cash Collected</th><th>Variance</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <% rows.forEach(r => { %>
+        <tr>
+          <td><%= r.agent_name %></td>
+          <td>KES <%= parseFloat(r.total_sales).toFixed(2) %></td>
+          <td>KES <%= parseFloat(r.cash_collected).toFixed(2) %></td>
+          <td class="<%= parseFloat(r.variance) !== 0 ? 'text-danger' : '' %>">
+            KES <%= parseFloat(r.variance).toFixed(2) %>
+          </td>
+          <td><span class="badge badge-<%= r.status === 'approved' ? 'active' : 'inactive' %>"><%= r.status %></span></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../partials/footer') %>

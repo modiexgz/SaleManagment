@@ -1,0 +1,85 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <h1>Manager Dashboard</h1>
+  <p>Branch operations overview</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card highlight">
+    <span class="stat-label">Today's Sales</span>
+    <span class="stat-value">KES <%= todaySales.toLocaleString('en-KE', { minimumFractionDigits: 2 }) %></span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Active Products</span>
+    <span class="stat-value"><%= inventory.product_count %></span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Total Stock Units</span>
+    <span class="stat-value"><%= inventory.total_units %></span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Inventory Value</span>
+    <span class="stat-value">KES <%= parseFloat(inventory.total_value).toLocaleString('en-KE', { minimumFractionDigits: 2 }) %></span>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h2>Low Stock Alerts</h2>
+    <% if (lowStock.length === 0) { %>
+      <p class="text-muted">All products are adequately stocked.</p>
+    <% } else { %>
+      <table class="table">
+        <thead><tr><th>Product</th><th>Category</th><th>Qty</th><th>Reorder</th></tr></thead>
+        <tbody>
+          <% lowStock.forEach(p => { %>
+            <tr class="<%= p.quantity === 0 ? 'row-danger' : 'row-warning' %>">
+              <td><%= p.name %></td>
+              <td><%= p.category_name %></td>
+              <td><%= p.quantity %></td>
+              <td><%= p.reorder_level %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <div class="card">
+    <h2>Cashier Sales Today</h2>
+    <table class="table">
+      <thead><tr><th>Cashier</th><th>Sales</th></tr></thead>
+      <tbody>
+        <% cashierSales.forEach(c => { %>
+          <tr>
+            <td><%= c.full_name %></td>
+            <td>KES <%= parseFloat(c.total).toFixed(2) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<% if (notifications.length > 0) { %>
+<div class="card">
+  <h2>Recent Notifications</h2>
+  <% notifications.forEach(n => { %>
+    <div class="notification-item <%= n.type %>">
+      <strong><%= n.type.replace('_', ' ').toUpperCase() %></strong>
+      <p><%= n.message %></p>
+      <small><%= new Date(n.created_at).toLocaleString() %></small>
+    </div>
+  <% }) %>
+  <a href="/notifications" class="btn btn-sm btn-outline">View All</a>
+</div>
+<% } %>
+
+<div class="action-links">
+  <a href="/procurement/new" class="btn btn-primary">Record Procurement</a>
+  <a href="/inventory/adjust" class="btn btn-outline">Stock Adjustment</a>
+  <a href="/cashier" class="btn btn-outline">Cashier Balancing</a>
+</div>
+
+<%- include('../partials/footer') %>

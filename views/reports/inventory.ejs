@@ -1,0 +1,31 @@
+<%- include('../partials/header') %>
+
+<div class="page-header flex-between">
+  <div><h1>Inventory Report</h1></div>
+  <div class="action-links">
+    <a href="/reports/inventory?format=pdf" class="btn btn-outline">Download PDF</a>
+    <a href="/reports" class="btn btn-outline">Back</a>
+  </div>
+</div>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr><th>Product</th><th>Category</th><th>Qty</th><th>Reorder</th><th>Status</th><th>Value (KES)</th></tr>
+    </thead>
+    <tbody>
+      <% rows.forEach(r => { %>
+        <tr class="<%= r.status === 'Out of Stock' ? 'row-danger' : (r.status === 'Low Stock' ? 'row-warning' : '') %>">
+          <td><%= r.name %></td>
+          <td><%= r.category %></td>
+          <td><%= r.quantity %></td>
+          <td><%= r.reorder_level %></td>
+          <td><%= r.status %></td>
+          <td><%= parseFloat(r.value).toFixed(2) %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../partials/footer') %>
