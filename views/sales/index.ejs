@@ -1,0 +1,41 @@
+<%- include('../partials/header') %>
+
+<div class="page-header flex-between">
+  <div>
+    <h1>Sales</h1>
+    <p>Transaction history</p>
+  </div>
+  <% if (user.role === 'sales_agent') { %>
+    <a href="/sales/new" class="btn btn-primary">+ New Sale</a>
+  <% } %>
+</div>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Receipt</th><th>Date</th><th>Product</th><th>Qty</th>
+        <th>Unit Price</th><th>Total</th><th>Paid</th><th>Agent</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% sales.forEach(s => { %>
+        <tr>
+          <td><%= s.receipt_number %></td>
+          <td><%= new Date(s.sale_date).toLocaleString() %></td>
+          <td><%= s.product_name %></td>
+          <td><%= s.quantity %></td>
+          <td>KES <%= parseFloat(s.unit_price).toFixed(2) %></td>
+          <td>KES <%= parseFloat(s.total_amount).toFixed(2) %></td>
+          <td>KES <%= parseFloat(s.amount_paid).toFixed(2) %></td>
+          <td><%= s.agent_name %></td>
+          <td>
+            <a href="/sales/<%= s.id %>/receipt" class="btn btn-sm btn-outline">Receipt</a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../partials/footer') %>

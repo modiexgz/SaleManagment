@@ -1,0 +1,29 @@
+{
+  "name": "csrms",
+  "version": "2.0.0",
+  "description": "Crown Stores Retail Management System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "db:setup": "node scripts/setup-db.js",
+    "db:seed": "node scripts/seed-db.js",
+    "db:init": "node scripts/setup-db.js && node scripts/seed-db.js",
+    "docs:pdf": "node scripts/generate-docs-pdf.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-pg-simple": "^10.0.0",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.2.1",
+    "method-override": "^3.0.0",
+    "pdfkit": "^0.16.0",
+    "pg": "^8.13.1"
+  }
+}

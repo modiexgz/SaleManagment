@@ -1,0 +1,9 @@
+<%- include('partials/header') %>
+
+<div class="error-page">
+  <h1><%= status || 500 %></h1>
+  <p><%= message %></p>
+  <a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
+</div>
+
+<%- include('partials/footer') %>

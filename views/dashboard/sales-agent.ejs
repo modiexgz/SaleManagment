@@ -1,0 +1,49 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <h1>Sales Agent Dashboard</h1>
+  <p>Welcome, <%= user.full_name %></p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card highlight">
+    <span class="stat-label">Today's Sales</span>
+    <span class="stat-value">KES <%= parseFloat(dailySales.total).toFixed(2) %></span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Transactions Today</span>
+    <span class="stat-value"><%= dailySales.count %></span>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Quick Sale</h2>
+  <p>Process a new cash sale transaction.</p>
+  <a href="/sales/new" class="btn btn-primary btn-lg">Start New Sale</a>
+</div>
+
+<div class="card">
+  <h2>Recent Sales</h2>
+  <% if (recentSales.length === 0) { %>
+    <p class="text-muted">No sales recorded yet today.</p>
+  <% } else { %>
+    <table class="table">
+      <thead>
+        <tr><th>Receipt</th><th>Product</th><th>Qty</th><th>Amount</th><th>Time</th></tr>
+      </thead>
+      <tbody>
+        <% recentSales.forEach(s => { %>
+          <tr>
+            <td><a href="/sales/<%= s.id %>/receipt"><%= s.receipt_number %></a></td>
+            <td><%= s.product_name %></td>
+            <td><%= s.quantity %></td>
+            <td>KES <%= parseFloat(s.total_amount).toFixed(2) %></td>
+            <td><%= new Date(s.sale_date).toLocaleTimeString() %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,55 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <h1>Cashier Balancing</h1>
+  <p>Verify and reconcile daily cashier sales</p>
+</div>
+
+<form method="GET" class="search-bar">
+  <label>Date:</label>
+  <input type="date" name="date" value="<%= date %>">
+  <button type="submit" class="btn btn-outline">View</button>
+</form>
+
+<div class="grid-2">
+  <% agents.forEach(agent => {
+    const balance = balances.find(b => b.sales_agent_id === agent.id);
+  %>
+  <div class="card">
+    <h3><%= agent.full_name %></h3>
+    <div class="balance-stats">
+      <p>Total Sales: <strong>KES <%= parseFloat(agent.total_sales).toFixed(2) %></strong></p>
+      <p>Transactions: <strong><%= agent.transaction_count %></strong></p>
+      <% if (balance) { %>
+        <p>Cash Collected: <strong>KES <%= parseFloat(balance.cash_collected).toFixed(2) %></strong></p>
+        <p>Variance: <strong class="<%= parseFloat(balance.variance) !== 0 ? 'text-danger' : 'text-success' %>">
+          KES <%= parseFloat(balance.variance).toFixed(2) %>
+        </strong></p>
+        <p>Status: <span class="badge badge-<%= balance.status === 'approved' ? 'active' : 'inactive' %>"><%= balance.status %></span></p>
+        <% if (balance.status === 'pending') { %>
+          <form method="POST" action="/cashier/<%= balance.id %>/approve">
+            <button type="submit" class="btn btn-success btn-sm">Approve Balance</button>
+          </form>
+        <% } %>
+      <% } %>
+    </div>
+
+    <form method="POST" action="/cashier/submit" class="form" style="margin-top:1rem">
+      <input type="hidden" name="sales_agent_id" value="<%= agent.id %>">
+      <input type="hidden" name="balance_date" value="<%= date %>">
+      <div class="form-group">
+        <label>Cash Collected (KES)</label>
+        <input type="number" name="cash_collected" step="0.01" min="0"
+               value="<%= balance ? balance.cash_collected : '' %>" required>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <input type="text" name="notes" value="<%= balance ? (balance.notes || '') : '' %>">
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">Submit Cash</button>
+    </form>
+  </div>
+  <% }) %>
+</div>
+
+<%- include('../partials/footer') %>

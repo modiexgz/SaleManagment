@@ -1,0 +1,129 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <h1>Point of Sale</h1>
+  <p>Process a cash sale transaction</p>
+</div>
+
+<div class="card form-card pos-card">
+  <% if (errors.length > 0) { %>
+    <div class="alert alert-error">
+      <% errors.forEach(e => { %><p><%= e.msg %></p><% }) %>
+    </div>
+  <% } %>
+
+  <form method="POST" action="/sales" class="form" id="saleForm">
+    <div class="form-group">
+      <label for="barcode">Scan Barcode</label>
+      <input type="text" id="barcode" placeholder="Scan or enter barcode..." autofocus>
+    </div>
+
+    <div class="form-group">
+      <label for="product_search">Search Product</label>
+      <input type="text" id="product_search" placeholder="Type product name...">
+      <div id="searchResults" class="search-results"></div>
+    </div>
+
+    <input type="hidden" id="product_id" name="product_id" value="<%= form.product_id || '' %>">
+
+    <div id="productInfo" class="product-info" style="display:none">
+      <h3 id="selectedProductName"></h3>
+      <p>Unit Price: <strong id="selectedPrice"></strong></p>
+      <p>Available Stock: <strong id="selectedStock"></strong></p>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="quantity">Quantity *</label>
+        <input type="number" id="quantity" name="quantity" min="1" value="<%= form.quantity || '1' %>" required>
+      </div>
+      <div class="form-group">
+        <label>Total Amount</label>
+        <div class="total-display" id="totalDisplay">KES 0.00</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="amount_paid">Amount Paid (KES) *</label>
+      <input type="number" id="amount_paid" name="amount_paid" step="0.01" min="0"
+             value="<%= form.amount_paid || '' %>" required>
+      <p id="changeDisplay" class="text-muted"></p>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary btn-lg" id="submitBtn" disabled>Complete Sale</button>
+      <a href="/dashboard" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  let selectedProduct = null;
+  const productIdInput = document.getElementById('product_id');
+  const productInfo = document.getElementById('productInfo');
+  const qtyInput = document.getElementById('quantity');
+  const paidInput = document.getElementById('amount_paid');
+  const submitBtn = document.getElementById('submitBtn');
+
+  function selectProduct(p) {
+    selectedProduct = p;
+    productIdInput.value = p.id;
+    document.getElementById('selectedProductName').textContent = p.name;
+    document.getElementById('selectedPrice').textContent = 'KES ' + parseFloat(p.selling_price).toFixed(2);
+    document.getElementById('selectedStock').textContent = p.quantity;
+    productInfo.style.display = 'block';
+    document.getElementById('searchResults').innerHTML = '';
+    updateTotals();
+  }
+
+  function updateTotals() {
+    if (!selectedProduct) { submitBtn.disabled = true; return; }
+    const qty = parseInt(qtyInput.value) || 0;
+    const total = parseFloat(selectedProduct.selling_price) * qty;
+    document.getElementById('totalDisplay').textContent = 'KES ' + total.toFixed(2);
+    const paid = parseFloat(paidInput.value) || 0;
+    const change = paid - total;
+    document.getElementById('changeDisplay').textContent = paid > 0
+      ? `Change: KES ${change >= 0 ? change.toFixed(2) : 'Insufficient'}`
+      : '';
+    submitBtn.disabled = qty < 1 || qty > selectedProduct.quantity || paid < total;
+  }
+
+  document.getElementById('barcode').addEventListener('keydown', async (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    const code = e.target.value.trim();
+    if (!code) return;
+    const res = await fetch('/products/barcode/' + encodeURIComponent(code));
+    if (res.ok) selectProduct(await res.json());
+    else alert('Product not found');
+    e.target.value = '';
+  });
+
+  let searchTimeout;
+  document.getElementById('product_search').addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    const q = e.target.value.trim();
+    if (q.length < 2) { document.getElementById('searchResults').innerHTML = ''; return; }
+    searchTimeout = setTimeout(async () => {
+      const res = await fetch('/products/search?q=' + encodeURIComponent(q));
+      const products = await res.json();
+      document.getElementById('searchResults').innerHTML = products.map(p =>
+        `<div class="search-item" data-id="${p.id}" data-name="${p.name}" data-price="${p.selling_price}" data-qty="${p.quantity}">
+          ${p.name} - KES ${parseFloat(p.selling_price).toFixed(2)} (${p.quantity} in stock)
+        </div>`
+      ).join('');
+      document.querySelectorAll('.search-item').forEach(el => {
+        el.addEventListener('click', () => selectProduct({
+          id: el.dataset.id, name: el.dataset.name,
+          selling_price: el.dataset.price, quantity: parseInt(el.dataset.qty)
+        }));
+      });
+    }, 300);
+  });
+
+  qtyInput.addEventListener('input', updateTotals);
+  paidInput.addEventListener('input', updateTotals);
+</script>
+
+<%- include('../partials/footer') %>

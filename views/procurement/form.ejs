@@ -1,0 +1,81 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <h1>Record Procurement</h1>
+  <p>Record stock received from a supplier</p>
+</div>
+
+<div class="card form-card">
+  <% if (errors.length > 0) { %>
+    <div class="alert alert-error">
+      <% errors.forEach(e => { %><p><%= e.msg %></p><% }) %>
+    </div>
+  <% } %>
+
+  <form method="POST" action="/procurement" class="form" id="procurementForm">
+    <div class="form-group">
+      <label for="product_id">Product *</label>
+      <select id="product_id" name="product_id" required>
+        <option value="">Select product</option>
+        <% products.forEach(p => { %>
+          <option value="<%= p.id %>" data-cost="<%= p.cost_price %>" data-qty="<%= p.quantity %>"
+            <%= form.product_id == p.id ? 'selected' : '' %>>
+            <%= p.name %> (Current stock: <%= p.quantity %>)
+          </option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="supplier_name">Supplier Name *</label>
+        <input type="text" id="supplier_name" name="supplier_name" value="<%= form.supplier_name || '' %>" required>
+      </div>
+      <div class="form-group">
+        <label for="received_date">Date Received</label>
+        <input type="date" id="received_date" name="received_date"
+               value="<%= form.received_date || new Date().toISOString().slice(0,10) %>">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="quantity_received">Quantity Received *</label>
+        <input type="number" id="quantity_received" name="quantity_received" min="1"
+               value="<%= form.quantity_received || '' %>" required>
+      </div>
+      <div class="form-group">
+        <label for="cost_price">Cost Price (KES) *</label>
+        <input type="number" id="cost_price" name="cost_price" step="0.01" min="0"
+               value="<%= form.cost_price || '' %>" required>
+      </div>
+    </div>
+    <p id="stockPreview" class="text-muted"></p>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Save Procurement</button>
+      <a href="/procurement" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  const productSelect = document.getElementById('product_id');
+  const qtyInput = document.getElementById('quantity_received');
+  const costInput = document.getElementById('cost_price');
+  const preview = document.getElementById('stockPreview');
+
+  function updatePreview() {
+    const opt = productSelect.selectedOptions[0];
+    if (!opt || !opt.value) { preview.textContent = ''; return; }
+    const current = parseInt(opt.dataset.qty) || 0;
+    const received = parseInt(qtyInput.value) || 0;
+    costInput.value = costInput.value || opt.dataset.cost;
+    preview.textContent = received > 0
+      ? `Updated stock will be: ${current} + ${received} = ${current + received}`
+      : `Current stock: ${current}`;
+  }
+
+  productSelect.addEventListener('change', updatePreview);
+  qtyInput.addEventListener('input', updatePreview);
+  updatePreview();
+</script>
+
+<%- include('../partials/footer') %>

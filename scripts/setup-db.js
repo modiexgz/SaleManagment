@@ -1,0 +1,62 @@
+const fs = require('fs');
+const path = require('path');
+require('./require-deps').requireDeps();
+const { Pool } = require('pg');
+require('dotenv').config();
+
+async function setup() {
+  const adminPool = new Pool({
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '5432', 10),
+    database: 'postgres',
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || '',
+  });
+
+  const dbName = process.env.DB_NAME || 'csrms';
+
+  try {
+    const exists = await adminPool.query(
+      'SELECT 1 FROM pg_database WHERE datname = $1',
+      [dbName]
+    );
+
+    if (exists.rows.length === 0) {
+      await adminPool.query(`CREATE DATABASE ${dbName}`);
+      console.log(`Database "${dbName}" created.`);
+    } else {
+      console.log(`Database "${dbName}" already exists.`);
+    }
+  } catch (err) {
+    console.error('Failed to create database:', err.message);
+    if (err.code === '28P01') {
+      console.error('\nWrong PostgreSQL password. Set DB_PASSWORD in your .env file.\n');
+    } else if (err.code === 'ECONNREFUSED') {
+      console.error('\nCannot connect to PostgreSQL. Make sure the PostgreSQL service is running.\n');
+    }
+    await adminPool.end();
+    process.exit(1);
+  } finally {
+    await adminPool.end();
+  }
+
+  const pool = new Pool({
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '5432', 10),
+    database: dbName,
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || '',
+  });
+
+  const schema = fs.readFileSync(path.join(__dirname, '../database/schema.sql'), 'utf8');
+  await pool.query(schema);
+  console.log('Schema applied successfully.');
+
+  await pool.end();
+  console.log('Database setup complete. Run "npm run db:seed" to add sample data.');
+}
+
+setup().catch((err) => {
+  console.error('Setup failed:', err);
+  process.exit(1);
+});

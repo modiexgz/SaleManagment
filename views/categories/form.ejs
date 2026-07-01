@@ -1,0 +1,39 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <h1><%= category ? 'Edit Category' : 'New Category' %></h1>
+</div>
+
+<div class="card form-card">
+  <% if (errors.length > 0) { %>
+    <div class="alert alert-error">
+      <% errors.forEach(e => { %><p><%= e.msg %></p><% }) %>
+    </div>
+  <% } %>
+
+  <form method="POST" action="<%= category ? '/categories/' + category.id : '/categories' %>" class="form">
+    <div class="form-group">
+      <label for="name">Category Name *</label>
+      <input type="text" id="name" name="name" value="<%= category ? category.name : '' %>" required>
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" rows="3"><%= category ? (category.description || '') : '' %></textarea>
+    </div>
+    <% if (category) { %>
+    <div class="form-group">
+      <label for="status">Status</label>
+      <select id="status" name="status">
+        <option value="active" <%= category.status === 'active' ? 'selected' : '' %>>Active</option>
+        <option value="inactive" <%= category.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+      </select>
+    </div>
+    <% } %>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Save Category</button>
+      <a href="/categories" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,38 @@
+<%- include('../partials/header') %>
+
+<div class="page-header flex-between">
+  <div>
+    <h1>Inventory History</h1>
+    <p>All inventory movements audit trail</p>
+  </div>
+  <a href="/inventory" class="btn btn-outline">Back to Inventory</a>
+</div>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Date</th><th>Product</th><th>Type</th><th>Change</th>
+        <th>Before</th><th>After</th><th>By</th><th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% movements.forEach(m => { %>
+        <tr>
+          <td><%= new Date(m.created_at).toLocaleString() %></td>
+          <td><%= m.product_name %></td>
+          <td><span class="badge"><%= m.movement_type %></span></td>
+          <td class="<%= m.quantity_change > 0 ? 'text-success' : 'text-danger' %>">
+            <%= m.quantity_change > 0 ? '+' : '' %><%= m.quantity_change %>
+          </td>
+          <td><%= m.quantity_before %></td>
+          <td><%= m.quantity_after %></td>
+          <td><%= m.performed_by_name || '-' %></td>
+          <td><%= m.notes || '-' %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../partials/footer') %>
