@@ -45,6 +45,15 @@ npm start
 
 Open http://localhost:3000
 
+## Presentation Guide (PDF)
+
+A downloadable PDF explaining how the system works — ideal for presenting to store owners:
+
+- **In the project:** `docs/CSRMS-System-Guide.pdf`
+- **Regenerate anytime:** `npm run docs:pdf`
+- **GitHub direct download:**  
+  https://github.com/modiexgz/SaleManagment/raw/cursor/csrms-retail-system-394a/docs/CSRMS-System-Guide.pdf
+
 ## Setup
 
 ### 1. Clone and install dependencies
