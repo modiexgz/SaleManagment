@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { pool } = require('./config/database');
+const { pool } = require('../config/database');
 
 const DB_NAME = process.env.DB_NAME || 'csrms';
 
